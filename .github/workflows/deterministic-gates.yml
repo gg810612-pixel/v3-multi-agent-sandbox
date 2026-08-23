@@ -35,7 +35,10 @@ jobs:
         run: ./scripts/test-checks.sh
 
   human-approval-only:
-    if: github.event_name == 'pull_request' || github.event_name == 'pull_request_review'
+    if: >-
+      github.event_name == 'pull_request_review' &&
+      (github.event.action == 'dismissed' ||
+      github.event.review.state == 'approved')
     name: human-approval-only
     runs-on: ubuntu-latest
     timeout-minutes: 5
