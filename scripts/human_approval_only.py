@@ -14,10 +14,13 @@ import urllib.request
 
 
 DECISIVE_HUMAN_STATES = {"APPROVED", "CHANGES_REQUESTED", "DISMISSED"}
+POLICY_ID = "V3.2.1-C2-HUMAN-APPROVAL-ONLY"
 
 
 def fail(reason: str) -> NoReturn:
-    raise SystemExit(f"C2_HUMAN_APPROVAL_ONLY=FAIL reason={reason}")
+    raise SystemExit(
+        f"C2_HUMAN_APPROVAL_ONLY=FAIL policy={POLICY_ID} reason={reason}"
+    )
 
 
 def load_reviews(path: Path) -> list[dict[str, Any]]:
@@ -135,6 +138,7 @@ def main() -> None:
     effective_humans = verify(reviews, args.expected_human)
     print(
         "C2_HUMAN_APPROVAL_ONLY=PASS "
+        f"policy={POLICY_ID} "
         f"effective_humans={effective_humans or 'none'}"
     )
 
