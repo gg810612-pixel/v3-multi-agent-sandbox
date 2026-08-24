@@ -2,7 +2,7 @@
 
 This public-sandbox artifact records the controlled C3 red/green sequence.
 
-- Current phase: `expired`
+- Current phase: `unmapped`
 - Commit trailers are self-reported metadata only.
 - GitHub event sender and the base-SHA registry are authoritative.
 - No secret, token, key, password, or human credential is included.
