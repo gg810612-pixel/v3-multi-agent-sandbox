@@ -42,4 +42,5 @@ if (
   exit 1
 fi
 
+python3 "$source_root/scripts/test-authoritative-provenance.py"
 printf 'red-team: PASS\n'

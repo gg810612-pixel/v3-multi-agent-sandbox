@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "registry_version": "V3.2.1-C3-COLLISION-FIXTURE",
+  "project_id": "v3-multi-agent-sandbox",
+  "repository": "gg810612-pixel/v3-multi-agent-sandbox",
+  "enforced_risk_levels": ["L2", "L3"],
+  "devices": [
+    {
+      "device_id": "mac-v3-builder-001",
+      "device_type": "macos-isolated-broker",
+      "owner": "gg810612-pixel",
+      "container_capable": false,
+      "agent_allowed": true,
+      "company_code_allowed": false,
+      "project_id": "v3-multi-agent-sandbox",
+      "repository": "gg810612-pixel/v3-multi-agent-sandbox",
+      "role": "builder",
+      "actor_login": "v3-sandbox-builder-gg810612-pixel[bot]",
+      "actor_type": "Bot",
+      "credential_kind": "github_app_installation",
+      "credential_id": "154156095",
+      "allowed_tools": ["git", "github-rest-api"],
+      "allowed_actions": ["push_branch", "open_pull_request", "update_pull_request"],
+      "approved_by": "gg810612-pixel",
+      "approved_at": "2026-08-24T00:00:00+08:00",
+      "expires_at": "2026-11-22T23:59:59+08:00",
+      "policy_reference": "V3.2.1-F.3"
+    },
+    {
+      "device_id": "mac-v3-reviewer-001",
+      "device_type": "macos-isolated-broker",
+      "owner": "gg810612-pixel",
+      "container_capable": false,
+      "agent_allowed": true,
+      "company_code_allowed": false,
+      "project_id": "v3-multi-agent-sandbox",
+      "repository": "gg810612-pixel/v3-multi-agent-sandbox",
+      "role": "reviewer",
+      "actor_login": "v3-sandbox-builder-gg810612-pixel[bot]",
+      "actor_type": "Bot",
+      "credential_kind": "github_app_installation",
+      "credential_id": "154156095",
+      "allowed_tools": ["github-rest-api"],
+      "allowed_actions": ["comment_pull_request"],
+      "approved_by": "gg810612-pixel",
+      "approved_at": "2026-08-24T00:00:00+08:00",
+      "expires_at": "2026-11-22T23:59:59+08:00",
+      "policy_reference": "V3.2.1-F.3"
+    }
+  ]
+}
