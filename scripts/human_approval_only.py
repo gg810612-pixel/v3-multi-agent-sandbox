@@ -14,7 +14,7 @@ import urllib.request
 
 
 DECISIVE_HUMAN_STATES = {"APPROVED", "CHANGES_REQUESTED", "DISMISSED"}
-POLICY_ID = "V3.2.1-C2-HUMAN-APPROVAL-ONLY"
+POLICY_ID = "V3.2.1-C2-HUMAN-APPROVAL-ONLY-R2"
 
 
 def fail(reason: str) -> NoReturn:
