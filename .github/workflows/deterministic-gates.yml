@@ -34,7 +34,7 @@ jobs:
         run: ./scripts/test-checks.sh
 
   human-approval-only:
-        if: >-
+    if: >-
       github.event_name == 'pull_request_review' &&
       github.event.action == 'submitted' &&
       github.event.review.state == 'approved'
