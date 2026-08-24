@@ -1,0 +1,16 @@
+{
+  "action": "synchronize",
+  "repository": {
+    "full_name": "gg810612-pixel/v3-multi-agent-sandbox"
+  },
+  "sender": {
+    "login": "v3-sandbox-builder-gg810612-pixel[bot]",
+    "type": "Bot"
+  },
+  "pull_request": {
+    "number": 5,
+    "head": {
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  }
+}
