@@ -11,7 +11,7 @@ import re
 from typing import Any, NoReturn
 
 
-POLICY_ID = "V3.2.1-C3-AUTHORITATIVE-PROVENANCE-DEVICE"
+POLICY_ID = "V3.2.1-C3-AUTHORITATIVE-PROVENANCE-DEVICE-R1"
 REQUIRED_DEVICE_FIELDS = {
     "device_id",
     "device_type",
