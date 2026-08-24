@@ -57,3 +57,113 @@ jobs:
           python3 scripts/human_approval_only.py
           --repository "${{ github.repository }}"
           --pull-number "${{ github.event.pull_request.number }}"
+
+  provenance-device:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' ||
+      github.event.action == 'synchronize')
+    name: provenance-device
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Check out base trust root
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .c3-trust
+          persist-credentials: false
+
+      - name: Check out head for commit metadata only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: .c3-head
+          persist-credentials: false
+
+      - name: Reconcile authoritative actor and device
+        shell: bash
+        run: |
+          set -euo pipefail
+          verifier='.c3-trust/scripts/verify_authoritative_provenance.py'
+          registry='.c3-trust/governance/device-registry.json'
+          if [[ ! -f "$verifier" || ! -f "$registry" ]]; then
+            echo 'C3_PROVENANCE_DEVICE=BOOTSTRAP_NOT_ENFORCED'
+            exit 0
+          fi
+          message_file="$RUNNER_TEMP/c3-commit-message.txt"
+          git -C .c3-head log -1 --format=%B > "$message_file"
+          python3 "$verifier" \
+            --registry "$registry" \
+            --event "$GITHUB_EVENT_PATH" \
+            --commit-message-file "$message_file" \
+            --risk-level L2
+
+  c3-negative-runtime:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' ||
+      github.event.action == 'synchronize')
+    name: c3-negative-runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Check out base negative fixtures
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .c3-trust
+          persist-credentials: false
+
+      - name: Check out head scenario marker only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: .c3-head
+          persist-credentials: false
+
+      - name: Run declared negative fixture as an intentional red check
+        shell: bash
+        run: |
+          set -euo pipefail
+          marker='.c3-head/.c3-negative-scenario.json'
+          if [[ ! -f "$marker" ]]; then
+            echo 'C3_NEGATIVE_RUNTIME=SKIPPED no_scenario_marker'
+            exit 0
+          fi
+          verifier='.c3-trust/scripts/verify_authoritative_provenance.py'
+          fixtures='.c3-trust/scripts/c3-fixtures'
+          if [[ ! -f "$verifier" ]]; then
+            echo 'C3_NEGATIVE_RUNTIME=FAIL missing_base_verifier' >&2
+            exit 1
+          fi
+          scenario="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["scenario"])' "$marker")"
+          message_file="$RUNNER_TEMP/c3-negative-commit-message.txt"
+          : > "$message_file"
+          case "$scenario" in
+            expired)
+              registry="$fixtures/registry-expired-builder.json"
+              event="$GITHUB_EVENT_PATH"
+              ;;
+            unmapped)
+              registry='.c3-trust/governance/device-registry.json'
+              event="$fixtures/event-unmapped-synchronize.json"
+              ;;
+            identity_collision)
+              registry="$fixtures/registry-identity-collision.json"
+              event="$GITHUB_EVENT_PATH"
+              ;;
+            *)
+              echo "C3_NEGATIVE_RUNTIME=FAIL unsupported_scenario=${scenario}" >&2
+              exit 1
+              ;;
+          esac
+          python3 "$verifier" \
+            --registry "$registry" \
+            --event "$event" \
+            --commit-message-file "$message_file" \
+            --risk-level L2
