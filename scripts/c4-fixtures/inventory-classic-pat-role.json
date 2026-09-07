@@ -1,0 +1,17 @@
+{
+  "schema_version": "V3.2.1-C4-EVIDENCE-R1",
+  "repository": "gg810612-pixel/v3-multi-agent-sandbox",
+  "observed_at": "2026-08-26T12:00:00+08:00",
+  "valid_until": "2026-11-24T12:00:00+08:00",
+  "deploy_keys": [],
+  "system_identities": [
+    {"role":"builder","credential_kind":"classic_pat","credential_id":"forbidden-system-pat-record"},
+    {"role":"reviewer","credential_kind":"github_app_installation","credential_id":"154666370"}
+  ],
+  "app_installations": [
+    {"role":"builder","app_id":"4605247","installation_id":"154156095","repository_selection":"selected","repository":"gg810612-pixel/v3-multi-agent-sandbox"},
+    {"role":"reviewer","app_id":"4624842","installation_id":"154666370","repository_selection":"selected","repository":"gg810612-pixel/v3-multi-agent-sandbox"}
+  ],
+  "classic_pat_policy": {"allowed_for_system_roles":true,"system_role_matches":["builder"],"inventory_status":"human_owner_readback_complete"},
+  "agent_runtime": {"execution_user":"v3-agent-runtime","prohibited_human_user":"huangchengzhang","gh_config_present":false,"gh_config_readable":false,"ssh_dir_present":false,"ssh_auth_sock_present":false,"git_credential_helpers":[],"credential_env_names":[],"human_keychain_path_readable":false}
+}

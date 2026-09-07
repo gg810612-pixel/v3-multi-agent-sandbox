@@ -43,4 +43,5 @@ if (
 fi
 
 python3 "$source_root/scripts/test-authoritative-provenance.py"
+python3 "$source_root/scripts/test-c4-credential-boundary.py"
 printf 'red-team: PASS\n'
