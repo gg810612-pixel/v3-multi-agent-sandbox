@@ -167,3 +167,99 @@ jobs:
             --event "$event" \
             --commit-message-file "$message_file" \
             --risk-level L2
+
+  credential-boundary:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' ||
+      github.event.action == 'synchronize')
+    name: credential-boundary
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Check out C4 base trust root
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .c4-trust
+          persist-credentials: false
+
+      - name: Verify authoritative credential-boundary evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          verifier='.c4-trust/scripts/verify_c4_credential_boundary.py'
+          evidence='.c4-trust/governance/c4-live-evidence.json'
+          if [[ ! -f "$verifier" && ! -f "$evidence" ]]; then
+            echo 'C4_CREDENTIAL_BOUNDARY=BOOTSTRAP_NOT_ENFORCED'
+            exit 0
+          fi
+          if [[ ! -f "$verifier" || ! -f "$evidence" ]]; then
+            echo 'C4_CREDENTIAL_BOUNDARY=FAIL reason=incomplete_base_trust_root' >&2
+            exit 1
+          fi
+          python3 "$verifier" \
+            --evidence "$evidence" \
+            --now "$(date -Iseconds)"
+
+  c4-negative-runtime:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' ||
+      github.event.action == 'synchronize')
+    name: c4-negative-runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Check out C4 base verifier and fixtures
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .c4-trust
+          persist-credentials: false
+
+      - name: Check out C4 head scenario marker only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: .c4-head
+          persist-credentials: false
+
+      - name: Run declared C4 negative fixture as an intentional red check
+        shell: bash
+        run: |
+          set -euo pipefail
+          marker='.c4-head/.c4-negative-scenario.json'
+          if [[ ! -f "$marker" ]]; then
+            echo 'C4_NEGATIVE_RUNTIME=SKIPPED no_scenario_marker'
+            exit 0
+          fi
+          verifier='.c4-trust/scripts/verify_c4_credential_boundary.py'
+          fixtures='.c4-trust/scripts/c4-fixtures'
+          if [[ ! -f "$verifier" || ! -d "$fixtures" ]]; then
+            echo 'C4_NEGATIVE_RUNTIME=FAIL missing_base_verifier_or_fixtures' >&2
+            exit 1
+          fi
+          scenario="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["scenario"])' "$marker")"
+          case "$scenario" in
+            human_visible)
+              evidence="$fixtures/inventory-human-credential-visible.json"
+              ;;
+            write_deploy_key)
+              evidence="$fixtures/inventory-write-deploy-key.json"
+              ;;
+            classic_pat)
+              evidence="$fixtures/inventory-classic-pat-role.json"
+              ;;
+            *)
+              echo "C4_NEGATIVE_RUNTIME=FAIL unsupported_scenario=${scenario}" >&2
+              exit 1
+              ;;
+          esac
+          python3 "$verifier" \
+            --evidence "$evidence" \
+            --now "$(date -Iseconds)"
