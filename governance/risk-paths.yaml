@@ -1,0 +1,49 @@
+{
+  "schema_version": "V3.2.1-C5-RISK-PATHS-R1",
+  "levels": ["L1", "L2", "L3"],
+  "default_risk": "L3",
+  "rules": [
+    {
+      "id": "governance-root-files",
+      "minimum_risk": "L3",
+      "matcher": {
+        "exact_paths": ["AGENTS.md", "CODEOWNERS"]
+      }
+    },
+    {
+      "id": "governance-and-infrastructure",
+      "minimum_risk": "L3",
+      "matcher": {
+        "prefixes": [".github/", ".agents/", "governance/", "infra/", "migrations/", "vendor/"]
+      }
+    },
+    {
+      "id": "security-and-sensitive-domain",
+      "minimum_risk": "L3",
+      "matcher": {
+        "segments": ["api", "auth", "authentication", "delete", "deletion", "dependencies", "payment", "payments", "permission", "permissions", "pii"]
+      }
+    },
+    {
+      "id": "dependency-lockfiles",
+      "minimum_risk": "L3",
+      "matcher": {
+        "exact_paths": ["Cargo.lock", "Gemfile.lock", "go.mod", "go.sum", "package-lock.json", "pnpm-lock.yaml", "poetry.lock", "requirements.txt", "yarn.lock"]
+      }
+    },
+    {
+      "id": "implementation-and-test-code",
+      "minimum_risk": "L2",
+      "matcher": {
+        "prefixes": ["runtime-tests/", "scripts/", "src/", "tests/"]
+      }
+    },
+    {
+      "id": "ordinary-documentation",
+      "minimum_risk": "L1",
+      "matcher": {
+        "suffixes": [".md"]
+      }
+    }
+  ]
+}

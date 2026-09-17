@@ -1,0 +1,78 @@
+{
+  "schema_version": "V3.2.1-C5-MANIFEST-R1",
+  "manifest_version": "1.0.0",
+  "project": {
+    "id": "v3-multi-agent-sandbox",
+    "repository": "gg810612-pixel/v3-multi-agent-sandbox",
+    "implementation_truth": "github",
+    "intent_system": "linear"
+  },
+  "rules": {
+    "global": {
+      "path": "governance/global-rules.yaml",
+      "sha256": "d9276436dd0fdcb6e2c9318bb28b47df93b6147aa023fd3837e5c323e65fa0a8"
+    },
+    "project": {
+      "path": "governance/project-rules.yaml",
+      "sha256": "83576b6c24b508a16931cb044c86d1c2698cedd0a71f83bf87f9a9654faad01f"
+    },
+    "risk_paths": {
+      "path": "governance/risk-paths.yaml",
+      "sha256": "537aca672c4b0ed3814509f61ce0950d0f1f1fd2a882a0a4e2f72aa1915662fb"
+    }
+  },
+  "identity": {
+    "authoritative_source": "github_event_and_c3_registry",
+    "self_report_is_authoritative": false
+  },
+  "builder": {
+    "contract": ".agents/builder-contract.md",
+    "single_writer_per_branch": true,
+    "merge_allowed": false
+  },
+  "roles": {
+    "routing": ".agents/role-routing.yaml"
+  },
+  "providers": {
+    "primary": "codex",
+    "failover_mode": "unavailable_or_quota_exhausted_only",
+    "adapters": [
+      {
+        "provider_id": "codex",
+        "status": "enabled",
+        "contract_version": "V3.2.1-C5-PROVIDER-R1"
+      },
+      {
+        "provider_id": "cursor",
+        "status": "planned",
+        "contract_version": "V3.2.1-C5-PROVIDER-R1"
+      },
+      {
+        "provider_id": "deepseek-harness",
+        "status": "planned",
+        "contract_version": "V3.2.1-C5-PROVIDER-R1"
+      }
+    ]
+  },
+  "handoff": {
+    "schema": ".agents/handoff.schema.json",
+    "require_clean_checkpoint": true,
+    "require_pushed_commit": true
+  },
+  "intake": {
+    "schema": ".agents/task-intake.schema.json",
+    "trust": "untrusted"
+  },
+  "required_checks": {
+    "preserve": [
+      "base-checks",
+      "human-approval-only",
+      "provenance-device",
+      "credential-boundary"
+    ],
+    "add": [
+      "governance-contract",
+      "test-quality"
+    ]
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gg810612-pixel.example/v3/schemas/c5-role-routing.schema.json",
+  "title": "V3.2.1 C5 Role Routing",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "risk_levels", "roles", "defaults", "rules"],
+  "properties": {
+    "schema_version": {"const": "V3.2.1-C5-ROLE-ROUTING-R1"},
+    "risk_levels": {"const": ["L1", "L2", "L3"]},
+    "roles": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/role"}},
+    "defaults": {"$ref": "#/$defs/defaults"},
+    "rules": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/rule"}}
+  },
+  "$defs": {
+    "stringList": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "write_mode", "deliverables", "prohibitions"],
+      "properties": {
+        "id": {"enum": ["planner", "architect", "developer", "qa", "security-specialist", "integration"]},
+        "write_mode": {"enum": ["none", "lease_only"]},
+        "deliverables": {"$ref": "#/$defs/stringList"},
+        "prohibitions": {"$ref": "#/$defs/stringList"}
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roles", "minimum_risk"],
+      "properties": {
+        "roles": {"$ref": "#/$defs/stringList"},
+        "minimum_risk": {"enum": ["L1", "L2", "L3"]}
+      }
+    },
+    "when": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "any_prefixes": {"$ref": "#/$defs/stringList"},
+        "any_segments": {"$ref": "#/$defs/stringList"},
+        "all_suffixes": {"$ref": "#/$defs/stringList"},
+        "task_kinds": {"$ref": "#/$defs/stringList"}
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "when", "add_roles", "minimum_risk"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "when": {"$ref": "#/$defs/when"},
+        "add_roles": {"$ref": "#/$defs/stringList"},
+        "minimum_risk": {"enum": ["L1", "L2", "L3"]}
+      }
+    }
+  }
+}

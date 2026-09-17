@@ -1,0 +1,22 @@
+{
+  "schema_version": "V3.2.1-C5-TASK-INTAKE-R1",
+  "task_id": "intake-github-001",
+  "source": "github_issue",
+  "source_reference": "issue:42",
+  "received_at": "2026-09-17T08:00:00Z",
+  "raw_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "trust": "untrusted",
+  "title": "Add export validation",
+  "intent": "Validate exported records before writing the artifact.",
+  "priority_claim": null,
+  "constraints": ["Keep the existing public interface stable."],
+  "acceptance_criteria_claims": ["Invalid records are rejected."],
+  "attachments": [],
+  "requested_repository": "gg810612-pixel/v3-multi-agent-sandbox",
+  "normalization": {
+    "unicode_normalized": true,
+    "control_characters_removed": true,
+    "embedded_instruction_detected": false,
+    "external_links_present": false
+  }
+}

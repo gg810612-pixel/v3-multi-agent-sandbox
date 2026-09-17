@@ -1,0 +1,80 @@
+{
+  "schema_version": "V3.2.1-C5-ROLE-ROUTING-R1",
+  "risk_levels": ["L1", "L2", "L3"],
+  "roles": [
+    {
+      "id": "planner",
+      "write_mode": "none",
+      "deliverables": ["scope", "acceptance-criteria", "risk-proposal", "pr-plan"],
+      "prohibitions": ["risk-downgrade", "permission-change"]
+    },
+    {
+      "id": "architect",
+      "write_mode": "none",
+      "deliverables": ["boundaries", "adr", "interfaces", "rollback-design"],
+      "prohibitions": ["identity-change", "permission-change"]
+    },
+    {
+      "id": "developer",
+      "write_mode": "lease_only",
+      "deliverables": ["implementation", "unit-tests", "migration-code"],
+      "prohibitions": ["approve", "merge"]
+    },
+    {
+      "id": "qa",
+      "write_mode": "none",
+      "deliverables": ["test-plan", "base-run-evidence", "regression-result"],
+      "prohibitions": ["gate-result-rewrite", "permission-change"]
+    },
+    {
+      "id": "security-specialist",
+      "write_mode": "none",
+      "deliverables": ["threat-model", "l3-checklist", "security-findings"],
+      "prohibitions": ["risk-acceptance", "security-setting-change"]
+    },
+    {
+      "id": "integration",
+      "write_mode": "lease_only",
+      "deliverables": ["dependency-ordering", "checkpoint", "push", "handoff"],
+      "prohibitions": ["merge", "branch-protection-change"]
+    }
+  ],
+  "defaults": {
+    "roles": ["planner", "developer", "qa", "integration"],
+    "minimum_risk": "L1"
+  },
+  "rules": [
+    {
+      "id": "governance-change",
+      "when": {
+        "any_prefixes": [".agents/", ".github/", "governance/"]
+      },
+      "add_roles": ["architect", "security-specialist"],
+      "minimum_risk": "L3"
+    },
+    {
+      "id": "security-sensitive",
+      "when": {
+        "any_segments": ["api", "auth", "authentication", "delete", "deletion", "dependencies", "payment", "payments", "permission", "permissions", "pii"]
+      },
+      "add_roles": ["architect", "security-specialist", "qa"],
+      "minimum_risk": "L3"
+    },
+    {
+      "id": "interface-change",
+      "when": {
+        "task_kinds": ["api_change", "architecture", "migration"]
+      },
+      "add_roles": ["architect"],
+      "minimum_risk": "L2"
+    },
+    {
+      "id": "docs-only",
+      "when": {
+        "all_suffixes": [".md"]
+      },
+      "add_roles": [],
+      "minimum_risk": "L1"
+    }
+  ]
+}
