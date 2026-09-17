@@ -43,6 +43,9 @@
   GitHub event、C3 registry、base-pinned rules 與 deterministic checks。
 - 同一 branch 任一時刻只允許一個 active Builder writer；failover 必須先完成可驗證的
   commit、push、handoff 與 lease release。
+- Human-owned workflow commit 後，若 branch protection 要求 approval 與 last pusher
+  分離，Builder follow-up 必須是可審查的 non-workflow 實質變更；metadata-only commit
+  不得被當成 last-pusher boundary 證據。
 - 任何設計若移除或改名 `base-checks`、`human-approval-only`、
   `provenance-device`、`credential-boundary`，或允許 Agent Approve / Merge，必須標示
   `BLOCKER` 並停止執行。
