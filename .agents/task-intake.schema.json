@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gg810612-pixel.example/v3/schemas/c5-task-intake.schema.json",
+  "title": "V3.2.1 C5 Untrusted Task Intake Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "source", "source_reference", "received_at", "raw_digest", "trust", "title", "intent", "priority_claim", "constraints", "acceptance_criteria_claims", "attachments", "requested_repository", "normalization"],
+  "properties": {
+    "schema_version": {"const": "V3.2.1-C5-TASK-INTAKE-R1"},
+    "task_id": {"type": "string", "minLength": 1},
+    "source": {"enum": ["linear", "github_issue", "chatgpt", "line", "dashboard"]},
+    "source_reference": {"type": "string", "minLength": 1},
+    "received_at": {"type": "string", "format": "date-time"},
+    "raw_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "trust": {"const": "untrusted"},
+    "title": {"type": "string", "minLength": 1},
+    "intent": {"type": "string", "minLength": 1},
+    "priority_claim": {"type": ["string", "null"]},
+    "constraints": {"$ref": "#/$defs/stringList"},
+    "acceptance_criteria_claims": {"$ref": "#/$defs/stringList"},
+    "attachments": {"type": "array", "items": {"$ref": "#/$defs/attachment"}},
+    "requested_repository": {"const": "gg810612-pixel/v3-multi-agent-sandbox"},
+    "normalization": {"$ref": "#/$defs/normalization"}
+  },
+  "$defs": {
+    "stringList": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "attachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "digest", "media_type"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "media_type": {"type": "string", "minLength": 1}
+      }
+    },
+    "normalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unicode_normalized", "control_characters_removed", "embedded_instruction_detected", "external_links_present"],
+      "properties": {
+        "unicode_normalized": {"const": true},
+        "control_characters_removed": {"const": true},
+        "embedded_instruction_detected": {"type": "boolean"},
+        "external_links_present": {"type": "boolean"}
+      }
+    }
+  }
+}

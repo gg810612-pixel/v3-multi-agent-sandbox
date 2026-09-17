@@ -1,0 +1,37 @@
+{
+  "schema_version": "V3.2.1-C5-RULES-R1",
+  "layer": "global",
+  "policy_id": "v3-controlled-pilot-global",
+  "repository": null,
+  "inherits": null,
+  "rules": {
+    "deny": [
+      "agent-no-merge",
+      "agent-no-approve",
+      "reviewer-advisory-only",
+      "agent-no-governance-mutation",
+      "agent-no-human-credential-access"
+    ],
+    "required": [
+      "github-implementation-truth",
+      "human-only-approval",
+      "authoritative-github-identity",
+      "single-writer-branch",
+      "untrusted-intake",
+      "base-pinned-verifier",
+      "fail-closed",
+      "base-checks",
+      "human-approval-only",
+      "provenance-device",
+      "credential-boundary"
+    ],
+    "allow": [
+      "read-assigned-repository",
+      "write-assigned-branch",
+      "create-commit",
+      "push-assigned-branch",
+      "open-pull-request",
+      "comment-pull-request"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gg810612-pixel.example/v3/schemas/c5-handoff.schema.json",
+  "title": "V3.2.1 C5 Pushed Checkpoint Handoff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "repository", "branch", "base_sha", "checkpoint_sha", "checkpoint_clean", "rules_hash", "manifest_hash", "risk_level", "completed_steps", "remaining_steps", "test_results", "changed_paths", "known_risks", "lease_released_at", "source_provider", "target_provider", "created_at", "artifact_digest"],
+  "properties": {
+    "schema_version": {"const": "V3.2.1-C5-HANDOFF-R1"},
+    "task_id": {"type": "string", "minLength": 1},
+    "repository": {"const": "gg810612-pixel/v3-multi-agent-sandbox"},
+    "branch": {"type": "string", "minLength": 1},
+    "base_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "checkpoint_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "checkpoint_clean": {"const": true},
+    "rules_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "manifest_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "risk_level": {"enum": ["L1", "L2", "L3"]},
+    "completed_steps": {"$ref": "#/$defs/stringList"},
+    "remaining_steps": {"$ref": "#/$defs/stringList"},
+    "test_results": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/testResult"}},
+    "changed_paths": {"$ref": "#/$defs/stringList"},
+    "known_risks": {"$ref": "#/$defs/stringList"},
+    "lease_released_at": {"type": "string", "format": "date-time"},
+    "source_provider": {"enum": ["codex", "cursor", "deepseek-harness"]},
+    "target_provider": {"enum": ["codex", "cursor", "deepseek-harness"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "artifact_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "stringList": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "testResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status", "artifact_digest"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "status": {"enum": ["pass", "fail", "inconclusive"]},
+        "artifact_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

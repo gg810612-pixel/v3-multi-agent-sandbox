@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gg810612-pixel.example/v3/schemas/c5-manifest.schema.json",
+  "title": "V3.2.1 C5 Agent Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "manifest_version", "project", "rules", "identity", "builder", "roles", "providers", "handoff", "intake", "required_checks"],
+  "properties": {
+    "schema_version": {"const": "V3.2.1-C5-MANIFEST-R1"},
+    "manifest_version": {"const": "1.0.0"},
+    "project": {"$ref": "#/$defs/project"},
+    "rules": {"$ref": "#/$defs/rules"},
+    "identity": {"$ref": "#/$defs/identity"},
+    "builder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract", "single_writer_per_branch", "merge_allowed"],
+      "properties": {
+        "contract": {"const": ".agents/builder-contract.md"},
+        "single_writer_per_branch": {"const": true},
+        "merge_allowed": {"const": false}
+      }
+    },
+    "roles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["routing"],
+      "properties": {"routing": {"const": ".agents/role-routing.yaml"}}
+    },
+    "providers": {"$ref": "#/$defs/providers"},
+    "handoff": {"$ref": "#/$defs/handoff"},
+    "intake": {"$ref": "#/$defs/intake"},
+    "required_checks": {"$ref": "#/$defs/requiredChecks"}
+  },
+  "$defs": {
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "repository", "implementation_truth", "intent_system"],
+      "properties": {
+        "id": {"const": "v3-multi-agent-sandbox"},
+        "repository": {"const": "gg810612-pixel/v3-multi-agent-sandbox"},
+        "implementation_truth": {"const": "github"},
+        "intent_system": {"const": "linear"}
+      }
+    },
+    "fileDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["global", "project", "risk_paths"],
+      "properties": {
+        "global": {"$ref": "#/$defs/fileDigest"},
+        "project": {"$ref": "#/$defs/fileDigest"},
+        "risk_paths": {"$ref": "#/$defs/fileDigest"}
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authoritative_source", "self_report_is_authoritative"],
+      "properties": {
+        "authoritative_source": {"const": "github_event_and_c3_registry"},
+        "self_report_is_authoritative": {"const": false}
+      }
+    },
+    "providerAdapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider_id", "status", "contract_version"],
+      "properties": {
+        "provider_id": {"enum": ["codex", "cursor", "deepseek-harness"]},
+        "status": {"enum": ["enabled", "planned"]},
+        "contract_version": {"const": "V3.2.1-C5-PROVIDER-R1"}
+      }
+    },
+    "providers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "failover_mode", "adapters"],
+      "properties": {
+        "primary": {"const": "codex"},
+        "failover_mode": {"const": "unavailable_or_quota_exhausted_only"},
+        "adapters": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/providerAdapter"}}
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "require_clean_checkpoint", "require_pushed_commit"],
+      "properties": {
+        "schema": {"const": ".agents/handoff.schema.json"},
+        "require_clean_checkpoint": {"const": true},
+        "require_pushed_commit": {"const": true}
+      }
+    },
+    "intake": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "trust"],
+      "properties": {
+        "schema": {"const": ".agents/task-intake.schema.json"},
+        "trust": {"const": "untrusted"}
+      }
+    },
+    "requiredChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preserve", "add"],
+      "properties": {
+        "preserve": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "add": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gg810612-pixel.example/v3/schemas/c5-rules.schema.json",
+  "title": "V3.2.1 C5 Global and Project Rules",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "layer", "policy_id", "repository", "inherits", "rules"],
+  "properties": {
+    "schema_version": {"const": "V3.2.1-C5-RULES-R1"},
+    "layer": {"enum": ["global", "project"]},
+    "policy_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "repository": {"type": ["string", "null"]},
+    "inherits": {"type": ["string", "null"]},
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deny", "required", "allow"],
+      "properties": {
+        "deny": {"$ref": "#/$defs/ruleIds"},
+        "required": {"$ref": "#/$defs/ruleIds"},
+        "allow": {"$ref": "#/$defs/ruleIds"}
+      }
+    }
+  },
+  "$defs": {
+    "ruleIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"layer": {"const": "global"}}},
+      "then": {
+        "properties": {
+          "repository": {"const": null},
+          "inherits": {"const": null}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"layer": {"const": "project"}}},
+      "then": {
+        "properties": {
+          "repository": {"const": "gg810612-pixel/v3-multi-agent-sandbox"},
+          "inherits": {"const": "governance/global-rules.yaml"}
+        }
+      }
+    }
+  ]
+}

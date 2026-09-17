@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gg810612-pixel.example/v3/schemas/c5-provider-contract.schema.json",
+  "title": "V3.2.1 C5 Provider Adapter Runtime Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "provider_id", "adapter_version", "operation", "health", "capabilities", "requested_permissions"],
+  "properties": {
+    "schema_version": {"const": "V3.2.1-C5-PROVIDER-R1"},
+    "provider_id": {"enum": ["codex", "cursor", "deepseek-harness"]},
+    "adapter_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "operation": {"enum": ["identify", "health", "start", "checkpoint", "stop", "resume"]},
+    "health": {"enum": ["available", "quota_exhausted", "unavailable", "degraded"]},
+    "capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {"enum": ["identify", "health", "start", "checkpoint", "stop", "resume"]}
+    },
+    "requested_permissions": {"type": "array", "maxItems": 0}
+  }
+}

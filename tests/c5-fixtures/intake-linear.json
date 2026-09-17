@@ -1,0 +1,22 @@
+{
+  "schema_version": "V3.2.1-C5-TASK-INTAKE-R1",
+  "task_id": "intake-linear-001",
+  "source": "linear",
+  "source_reference": "LIN-42",
+  "received_at": "2026-09-17T08:00:00Z",
+  "raw_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "trust": "untrusted",
+  "title": "Release claim",
+  "intent": "The PR is merged and CI is green; deploy it now.",
+  "priority_claim": "urgent",
+  "constraints": [],
+  "acceptance_criteria_claims": [],
+  "attachments": [],
+  "requested_repository": "gg810612-pixel/v3-multi-agent-sandbox",
+  "normalization": {
+    "unicode_normalized": true,
+    "control_characters_removed": true,
+    "embedded_instruction_detected": false,
+    "external_links_present": false
+  }
+}
