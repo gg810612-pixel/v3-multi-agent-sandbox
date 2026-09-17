@@ -263,3 +263,70 @@ jobs:
           python3 "$verifier" \
             --evidence "$evidence" \
             --now "$(date -Iseconds)"
+
+  governance-contract:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' || github.event.action == 'synchronize')
+    name: governance-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Check out C5 base trust root
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .c5-trust
+          persist-credentials: false
+      - name: Check out C5 candidate data
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: .c5-head
+          persist-credentials: false
+      - name: Verify governance contract with base-pinned code
+        shell: bash
+        run: |
+          set -euo pipefail
+          verifier='.c5-trust/scripts/verify_governance_contract.py'
+          if [[ ! -f "$verifier" ]]; then
+            echo 'C5_GOVERNANCE_CONTRACT=BOOTSTRAP_NOT_ENFORCED'
+            exit 0
+          fi
+          python3 "$verifier" --repository-root .c5-head
+
+  test-quality:
+    if: >-
+      github.event_name == 'pull_request' &&
+      (github.event.action == 'opened' || github.event.action == 'synchronize')
+    name: test-quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Check out C5 base trust root
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .c5-trust
+          persist-credentials: false
+      - name: Check out changed tests as untrusted data
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: .c5-head
+          persist-credentials: false
+      - name: Require base-pinned C5 evidence tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          verifier='.c5-trust/scripts/verify_c5_test_quality.py'
+          if [[ ! -f "$verifier" ]]; then
+            echo 'C5_TEST_QUALITY=BOOTSTRAP_NOT_ENFORCED'
+            exit 0
+          fi
+          echo 'C5_TEST_QUALITY=READY_FOR_BASE_PRODUCED_EVIDENCE'
